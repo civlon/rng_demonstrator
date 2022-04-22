@@ -1,35 +1,62 @@
 import random
 import struct
-from sys import stdout
 import sys
+
+# =====================================================
+# base algorithm for xorshift for generatin 32-bit number
 
 
 def xorshift(seed):
-    xorshift_seed = seed
-    xorshift_seed ^= xorshift_seed << 11  # 13
-    xorshift_seed ^= xorshift_seed >> 21  # 17
-    xorshift_seed ^= xorshift_seed << 15  # 5
-    xorshift_seed ^= xorshift_seed >> 7  # 5
+    seed ^= seed << 13  # 13
+    seed ^= seed >> 17  # 17
+    seed ^= seed << 5  # 5
+    # seed ^= seed << 7   # 5
     # The modulus limits it to a 32-bit number
-    xorshift_seed %= int("ffffffff", 16)
-    sys.stdout.buffer.write(struct.pack('>I', xorshift_seed))
-    return xorshift_seed
+    seed %= int("ffffffff", 16)
+    return seed
+
+# =====================================================
+# =====================================================
+# functions for testing dieharder
+# with raw unsigned 32 integer input
+# and changing seed
 
 
-def rotation(seed):
-    for _ in range(10000000):
+def rawInputChangingSeed():
+    seed = random.randint(0, 2**32)
+    while True:
+        generate_numbers(seed)
+
+
+def generate_numbers(seed):
+    for _ in range(1000000):  # 1 mio
         seed = xorshift(seed)
+        sys.stdout.buffer.write(struct.pack('>I', seed))
+
+# =====================================================
+# =====================================================
+# functions for testing dieharder
+# with raw unsigned 32 integer input
+# and non changing seed
+
+
+def rawInputStaticSeed():
+    seed = 2463534242
+    while True:
+        seed = xorshift(seed)
+        sys.stdout.buffer.write(struct.pack('>I', seed))
+
+# =====================================================
+# =====================================================
+# main
 
 
 def main():
-    seed = random.randint(0, 2**32)
-    N = 1000000  # 1 mio
-
-    while True:
-        seed = int(random.randint(0, 2**32))
-        rotation(seed)
-        #seed = xorshift(seed)
+    # rawInputStaticSeed()
+    rawInputChangingSeed()
 
 
 if __name__ == '__main__':
     main()
+
+# =====================================================

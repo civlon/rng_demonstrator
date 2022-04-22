@@ -8,8 +8,8 @@ import time
 # Link: https://www.johndcook.com/blog/2017/07/05/simple-random-number-generator/
 
 # constants for LCG
-z = 56784654897435  # 20170705   # seed
-a = 13235981548769  # 742938285  # multiplier
+z = 10  # 20170705   # seed
+a = 62089911  # 742938285  # multiplier
 e = 31
 m = 2**e - 1    # modulus
 N = 1000000000  # 1.000.000.000
@@ -31,13 +31,13 @@ def lcg(z):
 
 
 def rawInputChangingSeed():
-    seed = random.randint(0, 2**32)
+    seed = random.randint(0, 2**30)
     while True:
         generate_numbers(seed)
 
 
 def generate_numbers(seed):
-    for _ in range(1000000):  # 1 mio
+    for _ in range(10000000):  # 1 mio
         seed = lcg(seed)
         sys.stdout.buffer.write(struct.pack('>I', seed))
 
