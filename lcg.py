@@ -9,10 +9,11 @@ import time
 
 # constants for LCG
 z = 10  # 20170705   # seed
-a = 62089911  # 742938285  # multiplier
+a = 1103515245  # 62089911  # 742938285  # multiplier
 e = 31
 m = 2**e - 1    # modulus
-N = 1000000000  # 1.000.000.000
+c = 12345
+N = 1000000  # 1.000.000.000
 
 # =====================================================
 # base LCG function
@@ -22,7 +23,8 @@ def lcg(z):
     global a
     global e
     global m
-    return a * z % m
+    global c
+    return ((a * z) + c) % m
 
 # =====================================================
 # functions for testing dieharder
@@ -32,12 +34,12 @@ def lcg(z):
 
 def rawInputChangingSeed():
     seed = random.randint(0, 2**30)
-    while True:
+    for _ in range(10000):
         generate_numbers(seed)
 
 
 def generate_numbers(seed):
-    for _ in range(10000000):  # 1 mio
+    for _ in range(100000):  # 1 mio
         seed = lcg(seed)
         sys.stdout.buffer.write(struct.pack('>I', seed))
 
@@ -50,7 +52,7 @@ def generate_numbers(seed):
 
 def rawInputStaticSeed():
     global z
-    while True:
+    for _ in range(N):
         z = lcg(z)
         sys.stdout.buffer.write(struct.pack('>I', z))
 
@@ -68,6 +70,7 @@ def txtFileInput():
     stdout.write('numbit: 32' + '\n')
 
     for _ in range(N):
+        print(_)
         z = lcg(z)
         stdout.write(str(z) + '\n')
 
@@ -79,6 +82,7 @@ def txtFileInput():
 def main():
     # rawInputStaticSeed()
     rawInputChangingSeed()
+    # txtFileInput()
 
 
 if __name__ == '__main__':
