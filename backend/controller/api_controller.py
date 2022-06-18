@@ -9,7 +9,6 @@ output = {}
 @app.route("/getTestData")
 def get_test_data():
     controller = TestController()
-    print('test')
     controller.runDieharderTest(0)
     output = controller.summerizeTestResults().toJSON()
     return output

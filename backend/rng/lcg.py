@@ -13,7 +13,7 @@ a = 1103515245  # 62089911  # 742938285  # multiplier
 e = 31
 m = 2**e - 1    # modulus
 c = 12345
-N = 1000000  # 1.000.000.000
+N = 1000000000  # 1.000.000.000
 
 # =====================================================
 # base LCG function
@@ -51,10 +51,12 @@ def generate_numbers(seed):
 
 
 def rawInputStaticSeed():
-    global z
-    for _ in range(N):
-        z = lcg(z)
-        sys.stdout.buffer.write(struct.pack('>I', z))
+    # global z
+    # while True:
+    #     z = lcg(z)
+    #     sys.stdout.buffer.write(struct.pack('>I', z))
+    while True:
+        random.randint(0, 2**30)
 
 # =====================================================
 # =====================================================
@@ -80,8 +82,11 @@ def txtFileInput():
 
 
 def main():
+    while True:
+        seed = int(random.random() * 2**30)
+        sys.stdout.buffer.write(struct.pack('>I', seed))
     # rawInputStaticSeed()
-    rawInputChangingSeed()
+    # rawInputChangingSeed()
     # txtFileInput()
 
 
