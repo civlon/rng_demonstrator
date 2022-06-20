@@ -1,13 +1,12 @@
-from flask import Flask, g
+from flask import Flask
 
 from controller.test_controller import TestController
 
-app = Flask(__name__)
-output = {}
+# app = Flask(__name__)
 
 
-@app.route("/getTestData")
-def get_test_data():
+# @app.route("/getTestData")
+def getTestData():
     controller = TestController()
     controller.runDieharderTest(0)
     output = controller.summerizeTestResults().toJSON()

@@ -2,20 +2,17 @@
 # main
 
 
-from controller.api_controller import ApiController
+import controller.api_controller as api
 from controller.test_controller import TestController
+from flask import Flask
 
 
 def main():
-    testController = TestController()
-    testController.runDieharderTest(0)
-    # controller.runDieharderTest(1)
-    # controller.runDieharderTest(10)
-    # controller.runDieharderTest(11)
-    output = testController.summerizeTestResults().toJSON()
-    print(output)
-    apiController = ApiController(output)
-    apiController.run()
+    app = Flask(__name__)
+
+    app.add_url_rule('/', view_func=api.getTestData)
+
+    app.run(debug=True)
 
 
 if __name__ == '__main__':
