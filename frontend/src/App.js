@@ -26,7 +26,7 @@ function GetTestDataButton({ children, getTestData, ...props }) {
 
   const handleOnClick = async () => {
     setIsButtonLoading(true);
-    await fetch("/").then(res => res.json()).then(data => { getTestData(data) }, [])
+    await fetch("/getTestData").then(res => res.json()).then(data => { getTestData(data) }, [])
     setIsButtonLoading(false);
   }
 
