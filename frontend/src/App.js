@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button, Spinner } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
@@ -26,7 +26,7 @@ function GetTestDataButton({ children, getTestData, ...props }) {
 
   const handleOnClick = async () => {
     setIsButtonLoading(true);
-    await fetch("/getTestData").then(res => res.json()).then(data => { getTestData(data) }, [])
+    await fetch("/").then(res => res.json()).then(data => { getTestData(data) }, [])
     setIsButtonLoading(false);
   }
 
