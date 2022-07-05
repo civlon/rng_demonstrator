@@ -3,14 +3,15 @@ from objects.output import Output
 
 
 class TestController:
-    def __init__(self):
+    def __init__(self, mode):
+        self.mode = mode
         self.dieharderTestList = []
         self.numberOfPassedTests = 0
         self.numberOfFailedTests = 0
         self.allPValues = []
 
     def runDieharderTest(self, testNumber):
-        dieharderTest = DieharderTest(testNumber)
+        dieharderTest = DieharderTest(testNumber, self.mode)
         self.dieharderTestList.append(dieharderTest)
         self.allPValues.append(float(dieharderTest.pvalue))
         if(dieharderTest.result == 'PASSED'):
