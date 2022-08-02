@@ -7,7 +7,8 @@ class Output:
                  allTestNames,
                  numberOfPassedTests,
                  numberOfFailedTests,
-                 averagePValue):
+                 averagePValue
+                 ):
 
         self.numberOfTests = numberOfTests
         self.allTestNames = allTestNames

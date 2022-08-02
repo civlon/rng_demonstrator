@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div class="homepage">
-      <p>testing result: {JSON.stringify(data)}</p>
+      <p>testing results: {JSON.stringify(data)}</p>
       <GetTestDataButton getTestData={getTestData} mode={mode}>Get Test Data</GetTestDataButton>
       &nbsp;&nbsp;&nbsp;
       <ChangePrngModeButton toggleMode={toggleMode} >Change Mode</ChangePrngModeButton>

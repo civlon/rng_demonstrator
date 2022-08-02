@@ -1,6 +1,5 @@
 import struct
 import subprocess
-from objects.cliff import CliffPRNG
 
 # Constants
 RESULT_LINE_NUMBER = 8
@@ -12,13 +11,12 @@ WEAK = 'WEAK'
 
 
 class DieharderTest:
-    def __init__(self, testNumber, mode):
+    def __init__(self, testNumber, prng):
         self.testNumber = testNumber
-        dieharderOutput = self.runSubprocess(mode)
+        dieharderOutput = self.runSubprocess(prng)
         self.stripOutputIntoVariables(dieharderOutput)
 
-    def runSubprocess(self, mode):
-        prng = CliffPRNG(mode)
+    def runSubprocess(self, prng):
         args = [DIEHARDER, GENERATOR_NUMBER, f'-d{self.testNumber}']
         # use subprocess.PIPE to access stdin and stdout
         # enables stdin.write() and stdout.readlines()
@@ -27,12 +25,12 @@ class DieharderTest:
         while dieharderTestProc.returncode is None:
             # struct.pack is necessary for stdin.write() to accept input
             dieharderTestProc.stdin.write(
-                struct.pack('>I', prng.next()))
+                struct.pack('I', prng.next()))
             # p.poll() needs to check if process terminated, else code returns BrokenPipeError
             dieharderTestProc.poll()
         procOutput = dieharderTestProc.stdout.readlines()
         # terminate process just to be safe
-        dieharderTestProc.terminate()
+        dieharderTestProc.kill()
         # only use needed line where test data is saved
         # this saves strip work
         return str(procOutput[RESULT_LINE_NUMBER])
