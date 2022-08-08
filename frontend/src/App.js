@@ -11,6 +11,7 @@ const prngMode = {
 function App() {
   const [data, setData] = useState({})
   const [mode, setMode] = useState(prngMode.static)
+  const [requestTime, setRequestTime] = useState(null)
 
   const getTestData = (data) => {
     setData(data)
@@ -21,13 +22,19 @@ function App() {
       : prngMode.static))
   }
 
+  const getRequestTime = (time) => {
+    setRequestTime(time)
+  }
+
   return (
     <div class="homepage">
-      <p>testing results: {JSON.stringify(data)}</p>
-      <GetTestDataButton getTestData={getTestData} mode={mode}>Get Test Data</GetTestDataButton>
+      <p>testing results: <pre>{JSON.stringify(data)}</pre></p>
+      <GetTestDataButton getTestData={getTestData} mode={mode} getRequestTime={getRequestTime}>Get Test Data</GetTestDataButton>
       &nbsp;&nbsp;&nbsp;
       <ChangePrngModeButton toggleMode={toggleMode} >Change Mode</ChangePrngModeButton>
       <p>current mode: {mode}</p>
+      {requestTime != null &&
+        <p>time taken: {requestTime / 1000}s</p>}
     </div>
   )
 
@@ -35,12 +42,13 @@ function App() {
 
 export default App
 
-function GetTestDataButton({ children, getTestData, mode, ...props }) {
+function GetTestDataButton({ children, getTestData, mode, getRequestTime, ...props }) {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const handleOnClick = async () => {
     setIsButtonLoading(true);
-    await fetch("/get?" + mode).then(res => res.json()).then(data => { getTestData(data) }, [])
+    const start = new Date();
+    await fetch("/get?" + mode).then(res => res.json()).then(data => { const timeTaken = (new Date()) - start; getRequestTime(timeTaken); getTestData(data) }, [])
     setIsButtonLoading(false);
   }
 

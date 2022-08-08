@@ -1,4 +1,5 @@
 import random
+import struct
 
 
 class LcgPRNG():
@@ -6,19 +7,19 @@ class LcgPRNG():
         self.mode = mode
         self.startSeed = 1
         # POSIX constants
-        self.a = 25214903917
-        self.m = 2**48
-        self.c = 11
+        # self.a = 25214903917
+        # self.m = 2**48
+        # self.c = 11
         self.periodCounter = 0
         # initialize first number in sequence
         self.startLcg()
 
     def startLcg(self):
-        self.z = ((25214903917 * int(self.startSeed)) + 11) % 2**48
+        self.z = ((25214903917 * self.startSeed) + 11) & 0xffffffffffff
         return
 
     def lcg(self):
-        self.z = ((25214903917 * int(self.z)) + 11) % 2**48
+        self.z = ((25214903917 * self.z) + 11) & 0xffffffffffff
         return
 
     def next(self):
@@ -28,7 +29,12 @@ class LcgPRNG():
             self.startLcg()
             self.periodCounter = 0
         self.lcg()
-        self.periodCounter += 1
         number = self.z
-        number %= int("ffffffff", 16)
-        return number
+        self.periodCounter += 1
+        return (number % 0xffffffff)
+
+    def nextLines(self):
+        numbers = []
+        for i in range(10000):
+            numbers.append(struct.pack('I', self.next()))
+        return numbers

@@ -24,10 +24,14 @@ class DieharderTest:
                                              stdin=subprocess.PIPE)
         while dieharderTestProc.returncode is None:
             # struct.pack is necessary for stdin.write() to accept input
-            dieharderTestProc.stdin.write(
-                struct.pack('I', prng.next()))
+            # for _ in range(10000):
+            try:
+                dieharderTestProc.stdin.write(
+                    struct.pack('I', prng.next()))
+            except:
+                break
             # p.poll() needs to check if process terminated, else code returns BrokenPipeError
-            dieharderTestProc.poll()
+            # dieharderTestProc.poll()
         procOutput = dieharderTestProc.stdout.readlines()
         # terminate process just to be safe
         dieharderTestProc.kill()
