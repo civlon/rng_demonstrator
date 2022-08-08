@@ -1,0 +1,12 @@
+LCG:
+1. m 16, a 75, c 74     period 16-1, 0 passed static, 
+
+XORSHIFT: (<<, >>, <<)
+1. seed 134515345, 13, 17, 5     period 2**32-1  1 passed (changing and static)
+2. seed 134515345, 1, 3, 10      period 2**32-1  1 passed 
+3. seed 134515345, 1, 5, 16      period 2**32-1  0 passed 
+4. seed 134515345, 10, 9, 21     period 2**32-1  3 passed 
+5. seed 134515345, 6, 21, 7      period 2**32-1  6 passed 
+
+XORSHIFT128: 
+1. seed 88675123, 123456789, 362436069, 521288629 all passed 8.44m
