@@ -18,7 +18,14 @@ class R2:
         self.w = w ^ (w >> 19) ^ (t ^ (t >> 8)) & 0xffffffff
         return self.w
 
+    def period(self):
+        number = self.next()
+        counter = 1
+        while number != 88675123:
+            counter += 1
+            number = self.next()
+        print(counter)
+
 
 r = R2()
-while True:
-    sys.stdout.buffer.write(struct.pack('>I', r.next()))
+r.period()

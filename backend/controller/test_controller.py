@@ -18,7 +18,9 @@ class TestController:
                         globals(), locals(), 'profFiles/profTestNumber%s.prof' % (testNumber))
 
     def runDieharderTest(self, testNumber, allTests):
-        dieharderTest = DieharderTest(testNumber, self.prng)
+        dieharderTest = DieharderTest(testNumber)
+        res = dieharderTest.runSubprocess(self.prng)
+        dieharderTest.stripOutputIntoVariables(res)
         # result od process needs to be put into a managed list, because a multiprocess does not return the current instance of a class
         allTests.append(dieharderTest)
 
@@ -34,7 +36,7 @@ class TestController:
         processes = []
         for i in ALL_TEST_NUMBERS:
             process = multiprocessing.Process(
-                target=self.runDieharderTestProfiler, args=(i, allTests))
+                target=self.runDieharderTest, args=(i, allTests))
             process.daemon = True
             process.start()
             processes.append(process)

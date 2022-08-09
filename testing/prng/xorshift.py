@@ -45,6 +45,14 @@ def rawInputStaticSeed():
         seed %= int("ffffffff", 16)
         sys.stdout.buffer.write(struct.pack('>I', seed))
 
+def period():
+    number = xorshift(1)
+    counter = 1
+    while number != 1:
+        counter += 1
+        number = xorshift(number)
+    print(counter)
+
 
 # def rawInputStaticSeed():
 #     # seed = 134515345
@@ -61,7 +69,7 @@ def rawInputStaticSeed():
 
 
 def main():
-    rawInputStaticSeed()
+    period()
     # rawInputChangingSeed()
 
 

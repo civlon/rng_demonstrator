@@ -1,5 +1,7 @@
-import struct
+import cProfile
 import subprocess
+
+from objects.lcg import LcgPRNG
 
 # Constants
 RESULT_LINE_NUMBER = 8
@@ -11,30 +13,28 @@ WEAK = 'WEAK'
 
 
 class DieharderTest:
-    def __init__(self, testNumber, prng):
+    def __init__(self, testNumber):
         self.testNumber = testNumber
-        dieharderOutput = self.runSubprocess(prng)
-        self.stripOutputIntoVariables(dieharderOutput)
 
-    def runSubprocess(self, prng):
+    def runSubprocessProfiler(self, prng):
+        cProfile.runctx('self.runSubprocess(prng)',
+                        globals(), locals(), 'profFiles/profSubproc%s.prof' % (self.testNumber))
+
+    def runSubprocess(self, prng: LcgPRNG):
         args = [DIEHARDER, GENERATOR_NUMBER, f'-d{self.testNumber}']
         # use subprocess.PIPE to access stdin and stdout
         # enables stdin.write() and stdout.readlines()
         dieharderTestProc = subprocess.Popen(args, stdout=subprocess.PIPE,
                                              stdin=subprocess.PIPE)
         while dieharderTestProc.returncode is None:
-            # struct.pack is necessary for stdin.write() to accept input
-            # for _ in range(10000):
-            try:
-                dieharderTestProc.stdin.write(
-                    struct.pack('I', prng.next()))
-            except:
-                break
+            for number in prng.generateNumberSequence():
+                try:
+                    dieharderTestProc.stdin.write(number)
+                except:
+                    break
             # p.poll() needs to check if process terminated, else code returns BrokenPipeError
-            # dieharderTestProc.poll()
+            dieharderTestProc.poll()
         procOutput = dieharderTestProc.stdout.readlines()
-        # terminate process just to be safe
-        dieharderTestProc.kill()
         # only use needed line where test data is saved
         # this saves strip work
         return str(procOutput[RESULT_LINE_NUMBER])

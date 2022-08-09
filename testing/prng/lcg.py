@@ -4,28 +4,34 @@ from sys import stdout
 import sys
 import time
 
+        # POSIX constants
+        # self.a = 25214903917
+        # self.m = 2**48
+        # self.c = 11
+        # period 100000
 
 class LcgPRNG():
     def __init__(self, mode):
         self.mode = mode
-        self.startSeed = 1
+        self.startSeed = 123456
         self.a = 25214903917
-        self.e = 31
         self.m = 2**48
         self.c = 11
         self.periodCounter = 0
         self.startLcg()
+        self.z = 1
+        #0xffffffffffff
 
     def startLcg(self):
-        self.z = ((self.a * int(self.startSeed)) + self.c) % self.m
+        self.z = ((12 * self.startSeed)) % 281474976710655
         return
 
     def lcg(self):
-        self.z = ((self.a * int(self.z)) + self.c) % self.m
+        self.z = ((25214903912 * self.z)) % 281474976710655
         return
 
     def next(self):
-        if(self.periodCounter >= 100000):
+        if(self.periodCounter >= 26800):
             if(self.mode == 'changing'):
                 self.startSeed = random.randint(0, 2**32)
             self.startLcg()
@@ -35,6 +41,39 @@ class LcgPRNG():
         number = self.z
         number %= int("ffffffff", 16)
         return number
+
+    def periodRun(self):
+        while True:
+            self.z = 1
+            if(self.mode == 'changing'):
+                self.z = random.randint(0, 2**32)
+            for _ in range(26880):
+                self.lcg()
+                number = self.z
+                number %= int("ffffffff", 16)
+                sys.stdout.buffer.write(struct.pack('>I', number))
+
+    def period(self):
+        counter = 0
+        number = 0
+        while number != 1:
+            counter += 1
+            self.lcg()
+            number = self.z
+            #print(number)
+        print(counter)
+
+rng = LcgPRNG('changing')
+rng.period()
+print(0xffffffffffff)
+
+    #def startLcg(self):
+        #self.z = (25214903912 * self.startSeed) % 0xffffffffffff
+        #return
+
+    #def lcg(self):
+        #self.z = (25214903912 * self.z) % 0xffffffffffff
+        #return
 
 
 # # Source:
@@ -113,20 +152,20 @@ class LcgPRNG():
 # main
 
 
-def main():
+#def main():
     # while True:
     #     seed = int(random.random() * 2**30)
     #     sys.stdout.buffer.write(struct.pack('>I', seed))
     # rawInputStaticSeed()
     # rawInputChangingSeed()
     # txtFileInput()
-    rng = LcgPRNG('changing')
+    #rng = LcgPRNG('changing')
     # rng.next()
-    while True:
-        sys.stdout.buffer.write(struct.pack('I', rng.next()))
+    #while True:
+     #   sys.stdout.buffer.write(struct.pack('I', rng.next()))
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+    #main()
 
 # =====================================================
