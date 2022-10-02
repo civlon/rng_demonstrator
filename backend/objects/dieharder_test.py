@@ -1,7 +1,5 @@
-import cProfile
 import subprocess
-
-from objects.lcg import LcgPRNG
+from objects.prng import PRNG
 
 # Constants
 RESULT_LINE_NUMBER = 8
@@ -11,16 +9,12 @@ PASSED = 'PASSED'
 FAILED = 'FAILED'
 WEAK = 'WEAK'
 
-
 class DieharderTest:
-    def __init__(self, testNumber):
+    def __init__(self, testNumber, mode):
         self.testNumber = testNumber
+        self.mode = mode
 
-    def runSubprocessProfiler(self, prng):
-        cProfile.runctx('self.runSubprocess(prng)',
-                        globals(), locals(), 'profFiles/profSubproc%s.prof' % (self.testNumber))
-
-    def runSubprocess(self, prng: LcgPRNG):
+    def runSubprocess(self, prng: PRNG):
         args = [DIEHARDER, GENERATOR_NUMBER, f'-d{self.testNumber}']
         # use subprocess.PIPE to access stdin and stdout
         # enables stdin.write() and stdout.readlines()
@@ -55,5 +49,6 @@ class DieharderTest:
         self.psamples = psamples.strip()
         self.pvalue = pvalue.strip()
 
-    def __str__(self):
-        return f'{self.name}, {self.ntup}, {self.tsamples}, {self.psamples}, {self.pvalue}, {self.result}'
+    def asDict(self):
+        return {'n_tup': self.ntup, 't_samples': self.tsamples, 'p_samples': self.psamples, 'p_value': self.pvalue, 'result': self.result, 'mode': self.mode}
+

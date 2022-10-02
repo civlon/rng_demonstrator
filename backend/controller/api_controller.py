@@ -1,18 +1,34 @@
+import multiprocessing
 from objects.trng import Trng
 from flask import Flask, request
-from objects.lcg import LcgPRNG
+from objects.prng import PRNG
 from controller.test_controller import TestController
+import multiprocessing.queues
+import multiprocessing.synchronize
 
-# @app.route("/getTestData")
+class ApiController():
+    def __init__(self):
+        self.trng = Trng()
+        self.changingRng = PRNG('changing', self.trng)
+        self.staticRng = PRNG('static', self.trng)
+        self.trng.setUp()
+        self.trng.start_trng()
 
+    def runTest(self):
+        testNumber = request.query_string.decode("utf-8")
+        controller = TestController(self.changingRng)
+        try:
+            testsQueue = multiprocessing.Queue()
+        except:
+            testsQueue = multiprocessing.Queue()
+            testsQueue.close()
+        finally:
+            testsQueue = multiprocessing.Queue()
+        return controller.getTestResults(testNumber, self.changingRng, self.staticRng, testsQueue)
 
-def getTestData():
-    mode = request.query_string
-    trng = Trng()
-    trng.setUp()
-    trng.start_trng()
-    prng = LcgPRNG(mode.decode("utf-8"), trng)
-    controller = TestController(prng)
-    output = controller.runAllTests()
-    trng.stop()
-    return output
+    def roll(self):
+        mode = request.query_string.decode("utf-8")
+        if(mode == 'changing'):
+            return self.changingRng.rollDice()
+        if(mode == 'static'):
+            return self.staticRng.rollDice()
